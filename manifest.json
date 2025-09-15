@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Codeforces Friend Notes",
+  "version": "1.2",
+  "description": "Add personal notes to Codeforces friends (visible everywhere, synced across devices).",
+  "permissions": [ "storage" ],
+  "content_scripts": [
+    {
+      "matches": [ "*://codeforces.com/*" ],
+      "js": [ "content.js" ]
+    }
+  ]
+}
