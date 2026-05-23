@@ -1,12 +1,16 @@
 {
   "manifest_version": 3,
-  "name": "Codeforces Friend Notes",
-  "version": "1.2",
-  "description": "Add personal notes to Codeforces friends (visible everywhere, synced across devices).",
+  "name": "CP Friend Notes (Codeforces & AtCoder)",
+  "version": "2.0",
+  "description": "Add personal notes to Codeforces and AtCoder friends. Visible everywhere, synced across devices.",
   "permissions": [ "storage" ],
   "content_scripts": [
     {
-      "matches": [ "*://codeforces.com/*" ],
+      "matches": [ 
+        "*://codeforces.com/*", 
+        "*://*.codeforces.com/*", 
+        "*://atcoder.jp/*" 
+      ],
       "js": [ "content.js" ]
     }
   ]
