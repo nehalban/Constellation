@@ -81,6 +81,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                             logoSrc = 'Platform Logos/CodeForces.png';
                         } else if (platform === 'atcoder') {
                             logoSrc = 'Platform Logos/AtCoder.webp';
+                        } else if (platform === 'leetcode') {
+                            logoSrc = 'Platform Logos/LeetCode.png';
+                        } else if (platform === 'hackerrank') {
+                            logoSrc = 'Platform Logos/HackerRank.png';
                         }
                         
                         if (logoSrc) {

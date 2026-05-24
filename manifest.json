@@ -2,14 +2,18 @@
   "manifest_version": 3,
   "name": "Constellation",
   "version": "2.0",
-  "description": "Add personal notes to Codeforces and AtCoder friends. Visible everywhere, synced across devices.",
+  "description": "Add personal notes to Codeforces, AtCoder, LeetCode, and HackerRank friends. Visible everywhere, synced across devices.",
   "permissions": [ "storage" ],
   "content_scripts": [
     {
       "matches": [ 
         "*://codeforces.com/*", 
         "*://*.codeforces.com/*", 
-        "*://atcoder.jp/*" 
+        "*://atcoder.jp/*",
+        "*://leetcode.com/*",
+        "*://*.leetcode.com/*",
+        "*://hackerrank.com/*",
+        "*://*.hackerrank.com/*"
       ],
       "js": [ "content.js" ]
     }
@@ -27,7 +31,15 @@
   "web_accessible_resources": [
     {
       "resources": ["storageManager.js"],
-      "matches": ["*://codeforces.com/*", "*://*.codeforces.com/*", "*://atcoder.jp/*"]
+      "matches": [
+        "*://codeforces.com/*", 
+        "*://*.codeforces.com/*", 
+        "*://atcoder.jp/*",
+        "*://leetcode.com/*",
+        "*://*.leetcode.com/*",
+        "*://hackerrank.com/*",
+        "*://*.hackerrank.com/*"
+      ]
     }
   ],
   "action": {

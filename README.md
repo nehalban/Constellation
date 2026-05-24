@@ -1,10 +1,10 @@
 # Constellation
 
-A Chrome browser extension that allows you to add personal notes to your Codeforces and AtCoder friends. These notes are visible everywhere on the site and sync across all your devices.
+A Chrome browser extension that allows you to add personal notes to your Codeforces, AtCoder, LeetCode, and HackerRank friends. These notes are visible everywhere on the site and sync across all your devices.
 
 ## Features
 
-- **Multi-Platform Support** - Works seamlessly on both Codeforces.com and AtCoder.jp
+- **Multi-Platform Support** - Works seamlessly on Codeforces.com, AtCoder.jp, LeetCode.com, and HackerRank.com
 - **Smart Autocomplete & Identity Linking** - Link multiple handles across different platforms to a single person. Suggests existing contacts and auto-extracts real names from profiles as you type.
 - **Extension Popup Dashboard** - Easily view all your contacts in one place, search through them by name, handle, or notes, and manage or delete entries.
 - **Add personal notes** to any user on their profile page
@@ -18,12 +18,12 @@ A Chrome browser extension that allows you to add personal notes to your Codefor
 2. Open Chrome and navigate to `chrome://extensions/`
 3. Enable "Developer mode" in the top right corner
 4. Click "Load unpacked" and select the extension folder
-5. The extension is now active on Codeforces and AtCoder!
+5. The extension is now active on Codeforces, AtCoder, LeetCode, and HackerRank!
 
 ## How to Use
 
 ### Adding Notes
-1. Visit any user's profile page (e.g., `/profile/username` on CF, `/users/username` on AtCoder)
+1. Visit any user's profile page (e.g., `/profile/username` on CF, `/users/username` on AtCoder, `/u/username` on LeetCode, or `/profile/username` on HackerRank)
 2. You'll see a text input box next to the user's name/title
 3. Type your note and press Enter or click outside the box to save
 

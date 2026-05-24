@@ -1,19 +1,42 @@
 // Configuration based on the current platform
-const config = window.location.hostname.includes("atcoder.jp")
-    ? {
+let config = {};
+const hostname = window.location.hostname;
+
+if (hostname.includes("atcoder.jp")) {
+    config = {
         site: "atcoder",
         profileRegex: /^\/users\/([^/?#]+)/,
         profileTitleSelector: ".col-md-9 h3, .col-sm-9 h3, h3", 
         linkSelector: "a[href*='/users/']",
         realNameSelector: null
-    }
-    : {
+    };
+} else if (hostname.includes("leetcode.com")) {
+    config = {
+        site: "leetcode",
+        profileRegex: /^\/u\/([^/?#]+)/, // Fallback, Leetcode is usually /username but /u/username is safer. Let's support both: /^\/(?:u\/)?([^/?#]+)/ but standard LeetCode profile URL is often just /username. We will use a more restrictive regex if needed. Let's use /^\/u\/([^/?#]+)/ as a safe default or /^\/([^/?#]+)/. Actually, LeetCode's canonical is often /u/username. Let's use /^\/u\/([^/?#]+)/
+        profileTitleSelector: ".text-label-1, .text-label-1.dark\\:text-dark-label-1", 
+        linkSelector: "a[href*='/u/']",
+        realNameSelector: ".text-label-3, .text-label-3.dark\\:text-dark-label-3"
+    };
+    // Leetcode uses /username primarily. Let's make regex /^\/([^/?#]+)/ ? No, that matches everything. LeetCode profiles are just /username. It's hard to match. Wait, Leetcode profile URLs are usually accessed via /u/username. We will match /^\/u\/([^/?#]+)/.
+} else if (hostname.includes("hackerrank.com")) {
+    config = {
+        site: "hackerrank",
+        profileRegex: /^\/profile\/([^/?#]+)/,
+        profileTitleSelector: "h1.profile-heading",
+        linkSelector: "a[href*='/profile/']",
+        realNameSelector: ".profile-real-name"
+    };
+} else {
+    // Default to codeforces
+    config = {
         site: "codeforces",
         profileRegex: /^\/profile\/([^/?#]+)/,
         profileTitleSelector: ".main-info h1, .title",
         linkSelector: "a[href*='/profile/']",
         realNameSelector: ".main-info div[style*='color: #777']"
     };
+}
 
 let StorageManager;
 let currentDropdown = null;
