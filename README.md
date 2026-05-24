@@ -5,10 +5,12 @@ A Chrome browser extension that allows you to add personal notes to your Codefor
 ## Features
 
 - **Multi-Platform Support** - Works seamlessly on both Codeforces.com and AtCoder.jp
+- **Smart Autocomplete & Identity Linking** - Link multiple handles across different platforms to a single person. Suggests existing contacts and auto-extracts real names from profiles as you type.
+- **Extension Popup Dashboard** - Easily view all your contacts in one place, search through them by name, handle, or notes, and manage or delete entries.
 - **Add personal notes** to any user on their profile page
 - **See notes everywhere** - Notes appear next to usernames throughout the site (standings, comments, etc.)
 - **Cross-device sync** - Your notes are automatically synced across all your Chrome browsers via `chrome.storage.sync`
-- **Dynamic DOM Handling** - Uses `MutationObserver` to instantly render notes on paginated standings and dynamic AJAX content without slowing down the page
+- **Dynamic DOM Handling & Real-Time Updates** - Uses `MutationObserver` to instantly render notes on paginated standings and dynamic AJAX content, automatically updating visuals across tabs without needing a page refresh.
 
 ## Installation
 
