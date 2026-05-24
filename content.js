@@ -5,7 +5,7 @@ const config = window.location.hostname.includes("atcoder.jp")
         profileRegex: /^\/users\/([^/?#]+)/,
         profileTitleSelector: ".col-md-9 h3, .col-sm-9 h3, h3", 
         linkSelector: "a[href*='/users/']",
-        realNameSelector: ".dl-table tr:first-child td"
+        realNameSelector: null
     }
     : {
         site: "codeforces",
@@ -106,13 +106,15 @@ async function injectProfileEditor() {
             noteBox.value = identity.name;
         } else {
             // Attempt to extract real name from DOM for autocomplete
-            const nameEl = document.querySelector(config.realNameSelector);
-            if (nameEl && nameEl.textContent) {
-                // Sometimes format is "Real Name, City", so we extract just the name part if possible
-                let extractedName = nameEl.textContent.trim().split(',')[0].trim();
-                if (extractedName) {
-                    noteBox.placeholder = `${extractedName} (Press Tab)`;
-                    noteBox.dataset.autocomplete = extractedName;
+            if (config.realNameSelector) {
+                const nameEl = document.querySelector(config.realNameSelector);
+                if (nameEl && nameEl.textContent) {
+                    // Sometimes format is "Real Name, City", so we extract just the name part if possible
+                    let extractedName = nameEl.textContent.trim().split(',')[0].trim();
+                    if (extractedName && !extractedName.startsWith("From ")) {
+                        noteBox.placeholder = `${extractedName} (Press Tab)`;
+                        noteBox.dataset.autocomplete = extractedName;
+                    }
                 }
             }
         }
