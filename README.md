@@ -1,4 +1,4 @@
-# CP Friend Notes (Codeforces & AtCoder)
+# Constellation
 
 A Chrome browser extension that allows you to add personal notes to your Codeforces and AtCoder friends. These notes are visible everywhere on the site and sync across all your devices.
 

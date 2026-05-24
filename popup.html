@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Constellation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg-color: #F9FAFB;
+            --card-bg: #FFFFFF;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --border: #E5E7EB;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            width: 350px;
+            max-height: 500px;
+            overflow-y: auto;
+            color: var(--text-main);
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .search-container {
+            padding: 12px 20px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 54px;
+            z-index: 9;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        #contacts-list {
+            list-style: none;
+            padding: 12px 20px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .contact-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .contact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .contact-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #EF4444;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            opacity: 0.6;
+            transition: opacity 0.2s, background-color 0.2s;
+        }
+
+        .delete-btn:hover {
+            opacity: 1;
+            background-color: #FEE2E2;
+        }
+
+        .delete-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .contact-handles {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .badge {
+            font-size: 11px;
+            font-weight: 500;
+            padding: 4px 10px 4px 6px;
+            border-radius: 14px;
+            background-color: #E0E7FF;
+            color: #3730A3;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge.atcoder {
+            background-color: #FCE7F3;
+            color: #9D174D;
+        }
+
+        .platform-logo {
+            width: 14px;
+            height: 14px;
+            object-fit: contain;
+        }
+
+        .handle-text {
+            line-height: 1;
+        }
+
+        .contact-notes {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            color: #D1D5DB;
+            margin-bottom: 12px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .empty-state p {
+            margin: 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header style="display: flex; align-items: center; justify-content: center; padding: 12px 20px;">
+        <img src="Full_logo.png" alt="Constellation" style="max-width: 100%; max-height: 30px; object-fit: contain;">
+    </header>
+    
+    <div class="search-container">
+        <input type="text" id="search" class="search-input" placeholder="Search contacts..." autocomplete="off">
+    </div>
+
+    <ul id="contacts-list">
+        <!-- Contacts will be injected here -->
+    </ul>
+
+    <script type="module" src="popup.js"></script>
+</body>
+</html>
