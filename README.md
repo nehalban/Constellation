@@ -24,7 +24,7 @@ A Chrome browser extension that allows you to add personal notes to your Codefor
 
 ### Adding Notes
 1. Visit any user's profile page (e.g., `/profile/username` on CF, `/users/username` on AtCoder, `/u/username` on LeetCode, or `/profile/username` on HackerRank)
-2. You'll see a text input box next to the user's name/title
+2. You'll see a "Constellation:" label and a text input box near the user's name/title
 3. Type your note and press Enter or click outside the box to save
 
 ### Viewing Notes
