@@ -5,212 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Constellation</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #4F46E5;
-            --primary-hover: #4338CA;
-            --bg-color: #F9FAFB;
-            --card-bg: #FFFFFF;
-            --text-main: #111827;
-            --text-muted: #6B7280;
-            --border: #E5E7EB;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 0;
-            width: 350px;
-            max-height: 500px;
-            overflow-y: auto;
-            color: var(--text-main);
-        }
-
-        header {
-            background-color: var(--primary);
-            color: white;
-            padding: 16px 20px;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 18px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .search-container {
-            padding: 12px 20px;
-            background: white;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 54px;
-            z-index: 9;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 14px;
-            font-family: 'Inter', sans-serif;
-            box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .search-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        }
-
-        #contacts-list {
-            list-style: none;
-            padding: 12px 20px;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .contact-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .contact-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-
-        .contact-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .contact-name {
-            font-size: 16px;
-            font-weight: 600;
-            margin: 0 0 8px 0;
-        }
-
-        .delete-btn {
-            background: none;
-            border: none;
-            color: #EF4444;
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
-            opacity: 0.6;
-            transition: opacity 0.2s, background-color 0.2s;
-        }
-
-        .delete-btn:hover {
-            opacity: 1;
-            background-color: #FEE2E2;
-        }
-
-        .delete-btn svg {
-            width: 16px;
-            height: 16px;
-        }
-
-        .contact-handles {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 8px;
-        }
-
-        .badge {
-            font-size: 11px;
-            font-weight: 500;
-            padding: 4px 10px 4px 6px;
-            border-radius: 14px;
-            background-color: #E0E7FF;
-            color: #3730A3;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .badge.atcoder {
-            background-color: #FCE7F3;
-            color: #9D174D;
-        }
-
-        .badge.leetcode {
-            background-color: #FEF3C7;
-            color: #B45309;
-        }
-
-        .badge.hackerrank {
-            background-color: #D1FAE5;
-            color: #065F46;
-        }
-
-        .platform-logo {
-            width: 14px;
-            height: 14px;
-            object-fit: contain;
-        }
-
-        .handle-text {
-            line-height: 1;
-        }
-
-        .contact-notes {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin: 0;
-            line-height: 1.4;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-muted);
-        }
-
-        .empty-state svg {
-            width: 48px;
-            height: 48px;
-            color: #D1D5DB;
-            margin-bottom: 12px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .empty-state p {
-            margin: 0;
-            font-size: 14px;
-        }
-    </style>
+    <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-    <header style="display: flex; align-items: center; justify-content: center; padding: 12px 20px;">
-        <img src="Full_logo.png" alt="Constellation" style="max-width: 100%; max-height: 30px; object-fit: contain;">
+    <header class="app-bar">
+        <div class="app-bar-top">
+            <img src="logo.png" alt="Constellation" class="logo">
+            <button id="settings-btn" class="icon-button" aria-label="Settings">
+                <svg fill="currentColor" viewBox="0 0 24 24" width="24" height="24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+            </button>
+        </div>
+        <div class="search-container" id="search-container">
+            <svg class="search-icon" fill="currentColor" viewBox="0 0 24 24" width="20" height="20"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            <input type="text" id="search" class="search-input" placeholder="Search contacts..." autocomplete="off" aria-label="Search contacts">
+        </div>
     </header>
     
-    <div class="search-container">
-        <input type="text" id="search" class="search-input" placeholder="Search contacts..." autocomplete="off">
-    </div>
+    <main id="main-view" class="view active">
+        <ul id="contacts-list" class="contacts-list">
+            <!-- Shimmer / Contacts / Empty state injected here -->
+        </ul>
+    </main>
 
-    <ul id="contacts-list">
-        <!-- Contacts will be injected here -->
-    </ul>
+    <aside id="settings-view" class="view">
+        <div class="settings-header">
+            <button id="back-btn" class="icon-button" aria-label="Back">
+                <svg fill="currentColor" viewBox="0 0 24 24" width="24" height="24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            </button>
+            <h2>Settings</h2>
+        </div>
+        <div class="settings-content">
+            <div class="setting-item">
+                <div class="setting-info">
+                    <span class="setting-title">Dark Theme</span>
+                    <span class="setting-desc">Switch between light and dark mode</span>
+                </div>
+                <label class="switch" aria-label="Toggle dark theme">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
+    </aside>
 
     <script type="module" src="popup.js"></script>
 </body>

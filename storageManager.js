@@ -111,13 +111,16 @@ export class StorageManager {
             handles: identityData.handles !== undefined ? identityData.handles : (existingIdentity.handles || {})
         };
 
-        // Check for handle conflicts before making changes
+        // Check for handle conflicts and migrate handles from old identities
         if (identityData.handles) {
             for (const [platform, handles] of Object.entries(identityData.handles)) {
                 for (const handle of handles) {
                     const key = `${platform}_${handle}`;
                     if (lookup_index[key] && lookup_index[key] !== id) {
-                        throw new Error(`Conflict: Handle '${handle}' on '${platform}' is already linked to a different identity (${lookup_index[key]}).`);
+                        const oldIdentityId = lookup_index[key];
+                        if (identities[oldIdentityId] && identities[oldIdentityId].handles && identities[oldIdentityId].handles[platform]) {
+                            identities[oldIdentityId].handles[platform] = identities[oldIdentityId].handles[platform].filter(h => h !== handle);
+                        }
                     }
                 }
             }
@@ -244,7 +247,10 @@ export class StorageManager {
 
         const key = `${platform}_${newHandle}`;
         if (lookup_index[key] && lookup_index[key] !== identityId) {
-            throw new Error(`Conflict: Handle '${newHandle}' on '${platform}' is already linked to a different identity (${lookup_index[key]}).`);
+            const oldIdentityId = lookup_index[key];
+            if (identities[oldIdentityId] && identities[oldIdentityId].handles && identities[oldIdentityId].handles[platform]) {
+                identities[oldIdentityId].handles[platform] = identities[oldIdentityId].handles[platform].filter(h => h !== newHandle);
+            }
         }
 
         const handles = identities[identityId].handles || {};

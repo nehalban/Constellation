@@ -1,37 +1,93 @@
 import { StorageManager } from './storageManager.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // DOM Elements
     const listContainer = document.getElementById('contacts-list');
     const searchInput = document.getElementById('search');
+    const mainView = document.getElementById('main-view');
+    const settingsView = document.getElementById('settings-view');
+    const settingsBtn = document.getElementById('settings-btn');
+    const backBtn = document.getElementById('back-btn');
+    const themeToggle = document.getElementById('theme-toggle');
 
     let contacts = [];
 
-    // Fetch and render data
-    const loadContacts = async () => {
-        try {
-            const data = await StorageManager.getData();
-            contacts = Object.values(data.identities).sort((a, b) => 
-                (a.name || '').localeCompare(b.name || '')
-            );
-            renderContacts(contacts);
-        } catch (error) {
-            console.error("Failed to load contacts:", error);
-            listContainer.innerHTML = `<div class="empty-state"><p>Error loading contacts.</p></div>`;
+    // --- Theming Logic ---
+    const initTheme = () => {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            themeToggle.checked = true;
+        } else if (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.body.setAttribute('data-theme', 'dark');
+            themeToggle.checked = true;
         }
+    };
+
+    themeToggle.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    });
+
+    initTheme();
+
+    // --- Navigation Logic ---
+    settingsBtn.addEventListener('click', () => {
+        const isSettingsOpen = settingsView.classList.contains('active');
+        if (isSettingsOpen) {
+            settingsView.classList.remove('active');
+            mainView.classList.add('active');
+            document.querySelector('.search-container').style.display = 'flex';
+        } else {
+            mainView.classList.remove('active');
+            settingsView.classList.add('active');
+            document.querySelector('.search-container').style.display = 'none';
+        }
+    });
+
+    backBtn.addEventListener('click', () => {
+        settingsView.classList.remove('active');
+        mainView.classList.add('active');
+        document.querySelector('.search-container').style.display = 'flex';
+    });
+
+    // --- Rendering Logic ---
+    const showSkeleton = () => {
+        listContainer.innerHTML = '';
+        for (let i = 0; i < 4; i++) {
+            listContainer.innerHTML += `
+                <li class="skeleton-card">
+                    <div class="skeleton skeleton-title"></div>
+                    <div style="display: flex; gap: 8px;">
+                        <div class="skeleton skeleton-badge"></div>
+                        <div class="skeleton skeleton-badge"></div>
+                    </div>
+                    <div class="skeleton skeleton-text"></div>
+                    <div class="skeleton skeleton-text-short"></div>
+                </li>
+            `;
+        }
+    };
+
+    const showEmptyState = (isSearch = false) => {
+        listContainer.innerHTML = `
+            <div class="empty-state">
+                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+                <p>${isSearch ? 'No contacts match your search.' : 'No contacts found.'}</p>
+            </div>
+        `;
     };
 
     const renderContacts = (contactsToRender) => {
         listContainer.innerHTML = '';
 
         if (contactsToRender.length === 0) {
-            listContainer.innerHTML = `
-                <div class="empty-state">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    </svg>
-                    <p>No contacts found.</p>
-                </div>
-            `;
+            showEmptyState(searchInput.value.trim().length > 0);
             return;
         }
 
@@ -49,15 +105,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-btn';
             deleteBtn.title = 'Delete contact';
+            deleteBtn.setAttribute('aria-label', `Delete ${contact.name}`);
             deleteBtn.innerHTML = `
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                <svg fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/>
                 </svg>
             `;
             deleteBtn.addEventListener('click', async () => {
                 if (confirm(`Are you sure you want to delete ${contact.name}?`)) {
                     try {
                         await StorageManager.deleteIdentity(contact.id);
+                        // Refresh handled by storage listener
                     } catch (err) {
                         alert(err.message);
                     }
@@ -88,10 +146,35 @@ document.addEventListener('DOMContentLoaded', async () => {
                         }
                         
                         if (logoSrc) {
-                            badge.innerHTML = `<img src="${logoSrc}" alt="${platform} logo" class="platform-logo"> <span class="handle-text">${handle}</span>`;
+                            badge.innerHTML = `<img src="${logoSrc}" alt="${platform}" class="platform-logo"> <span>${handle}</span>`;
                         } else {
                             badge.textContent = `${platform}: ${handle}`;
                         }
+                        
+                        badge.style.cursor = "pointer";
+                        badge.title = `Open ${platform} profile`;
+                        
+                        badge.addEventListener('click', () => {
+                            let url = '';
+                            if (platform === 'codeforces') {
+                                url = `https://codeforces.com/profile/${handle}`;
+                            } else if (platform === 'atcoder') {
+                                url = `https://atcoder.jp/users/${handle}`;
+                            } else if (platform === 'leetcode') {
+                                url = `https://leetcode.com/u/${handle}`;
+                            } else if (platform === 'hackerrank') {
+                                url = `https://www.hackerrank.com/${handle}`;
+                            }
+                            
+                            if (url) {
+                                if (typeof chrome !== 'undefined' && chrome.tabs) {
+                                    chrome.tabs.create({ url });
+                                } else {
+                                    window.open(url, '_blank');
+                                }
+                            }
+                        });
+                        
                         handlesContainer.appendChild(badge);
                     });
                 }
@@ -112,13 +195,35 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     };
 
-    searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase().trim();
+    // --- Data Loading ---
+    const loadContacts = async () => {
+        showSkeleton();
+        try {
+            // Artificial delay to show off the beautiful skeleton animation as requested
+            await new Promise(resolve => setTimeout(resolve, 400));
+            
+            const data = await StorageManager.getData();
+            contacts = Object.values(data.identities).sort((a, b) => 
+                (a.name || '').localeCompare(b.name || '')
+            );
+            filterAndRender();
+        } catch (error) {
+            console.error("Failed to load contacts:", error);
+            listContainer.innerHTML = `<div class="empty-state"><p>Error loading contacts.</p></div>`;
+        }
+    };
+
+    const filterAndRender = () => {
+        const query = searchInput.value.toLowerCase().trim();
+        if (!query) {
+            renderContacts(contacts);
+            return;
+        }
+
         const filtered = contacts.filter(c => {
             const nameMatch = c.name && c.name.toLowerCase().includes(query);
             const notesMatch = c.notes && c.notes.toLowerCase().includes(query);
             
-            // Check handles for matches
             let handleMatch = false;
             if (c.handles) {
                 for (const handles of Object.values(c.handles)) {
@@ -128,18 +233,24 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 }
             }
-
             return nameMatch || notesMatch || handleMatch;
         });
         renderContacts(filtered);
-    });
+    };
 
-    // Listen for background updates to stay in sync dynamically without reopening popup
-    chrome.storage.onChanged.addListener((changes, areaName) => {
-        if (areaName === 'sync') {
-            loadContacts();
-        }
-    });
+    // --- Event Listeners ---
+    searchInput.addEventListener('input', filterAndRender);
 
-    await loadContacts();
+    // Sync listener
+    if (typeof chrome !== 'undefined' && chrome.storage) {
+        chrome.storage.onChanged.addListener((changes, areaName) => {
+            if (areaName === 'sync') {
+                // Background update occurred (e.g. from another tab or content script)
+                loadContacts();
+            }
+        });
+    }
+
+    // Initialize
+    loadContacts();
 });

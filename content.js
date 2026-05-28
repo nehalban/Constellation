@@ -13,19 +13,18 @@ if (hostname.includes("atcoder.jp")) {
 } else if (hostname.includes("leetcode.com")) {
     config = {
         site: "leetcode",
-        profileRegex: /^\/u\/([^/?#]+)/, // Fallback, Leetcode is usually /username but /u/username is safer. Let's support both: /^\/(?:u\/)?([^/?#]+)/ but standard LeetCode profile URL is often just /username. We will use a more restrictive regex if needed. Let's use /^\/u\/([^/?#]+)/ as a safe default or /^\/([^/?#]+)/. Actually, LeetCode's canonical is often /u/username. Let's use /^\/u\/([^/?#]+)/
-        profileTitleSelector: ".text-label-1, .text-label-1.dark\\:text-dark-label-1", 
+        profileRegex: /^\/u\/([^/?#]+)/,
+        profileTitleSelector: ".flex.space-x-4", 
         linkSelector: "a[href*='/u/']",
-        realNameSelector: ".text-label-3, .text-label-3.dark\\:text-dark-label-3"
+        realNameSelector: ".text-label-1.dark\\:text-dark-label-1.break-all.text-base.font-semibold, .text-label-1.break-all.text-base.font-semibold"
     };
-    // Leetcode uses /username primarily. Let's make regex /^\/([^/?#]+)/ ? No, that matches everything. LeetCode profiles are just /username. It's hard to match. Wait, Leetcode profile URLs are usually accessed via /u/username. We will match /^\/u\/([^/?#]+)/.
 } else if (hostname.includes("hackerrank.com")) {
     config = {
         site: "hackerrank",
-        profileRegex: /^\/profile\/([^/?#]+)/,
-        profileTitleSelector: "h1.profile-heading",
-        linkSelector: "a[href*='/profile/']",
-        realNameSelector: ".profile-real-name"
+        profileRegex: /^\/(?:profile\/)?([^/?#]+)/,
+        profileTitleSelector: ".profile-sidebar, h1.profile-heading, .profile-heading, .profile-name, .username, h1",
+        linkSelector: "a[href^='/']",
+        realNameSelector: ".hr-heading-02.profile-title.ellipsis, .profile-real-name, p.profile-real-name"
     };
 } else {
     // Default to codeforces
@@ -37,6 +36,8 @@ if (hostname.includes("atcoder.jp")) {
         realNameSelector: ".main-info div[style*='color: #777']"
     };
 }
+
+const HACKERRANK_RESERVED = ['challenges', 'domains', 'contests', 'dashboard', 'leaderboard', 'interview', 'skills-verification', 'work', 'settings', 'auth', 'login', 'logout', 'about', 'careers', 'community', 'privacy', 'terms', 'blog', 'forum', 'tracks', 'skills', 'certificates', 'campaign', 'events', 'hackathons', 'support', 'administration', 'scoring', 'test', 'feedback', 'rest', 'network'];
 
 let StorageManager;
 let currentDropdown = null;
@@ -84,6 +85,12 @@ async function injectProfileEditor() {
     if (!urlMatch) return;
 
     const handle = urlMatch[1];
+    
+    // Prevent injecting textboxes on HackerRank system pages that mimic profile URLs
+    if (config.site === 'hackerrank' && HACKERRANK_RESERVED.includes(handle.toLowerCase())) {
+        return;
+    }
+
     const titleEl = document.querySelector(config.profileTitleSelector);
 
     if (titleEl && !document.querySelector(".cf-note-profile-container")) {
@@ -92,6 +99,17 @@ async function injectProfileEditor() {
         container.style.display = "inline-block";
         container.style.position = "relative";
         container.style.marginLeft = "12px";
+        container.style.verticalAlign = "middle";
+
+        const label = document.createElement("div");
+        label.textContent = "Constellation:";
+        label.style.fontFamily = "'Brush Script MT', 'Segoe Script', cursive";
+        label.style.fontSize = "18px";
+        label.style.marginBottom = "4px";
+        label.style.color = "inherit";
+        label.style.opacity = "0.8";
+        
+        container.appendChild(label);
 
         const noteBox = document.createElement("input");
         noteBox.type = "text";
@@ -102,6 +120,19 @@ async function injectProfileEditor() {
         noteBox.style.border = "1px solid #ccc";
         noteBox.style.borderRadius = "4px";
         noteBox.style.fontWeight = "normal";
+
+        if (config.site === 'hackerrank' && titleEl.classList.contains('profile-sidebar')) {
+            container.style.display = "block";
+            container.style.marginLeft = "0";
+            container.style.marginTop = "16px";
+            container.style.width = "100%";
+            noteBox.style.width = "100%";
+            noteBox.style.boxSizing = "border-box";
+            noteBox.style.padding = "8px 12px";
+            noteBox.style.backgroundColor = "transparent";
+            noteBox.style.color = "inherit"; // Inherit text color for dark mode
+            noteBox.style.border = "1px solid #dcdcdc"; // match HackerRank border
+        }
 
         const dropdown = document.createElement("div");
         dropdown.style.position = "absolute";
@@ -121,7 +152,23 @@ async function injectProfileEditor() {
 
         container.appendChild(noteBox);
         container.appendChild(dropdown);
-        titleEl.appendChild(container);
+        
+        if (config.site === 'leetcode') {
+            container.style.display = "block";
+            container.style.marginLeft = "0";
+            container.style.marginTop = "8px";
+            container.style.marginBottom = "8px";
+            container.style.width = "100%";
+            noteBox.style.width = "100%";
+            noteBox.style.boxSizing = "border-box";
+            noteBox.style.padding = "8px 12px";
+            noteBox.style.backgroundColor = "transparent";
+            noteBox.style.color = "inherit";
+            noteBox.style.border = "1px solid #dcdcdc";
+            titleEl.insertAdjacentElement("afterend", container);
+        } else {
+            titleEl.appendChild(container);
+        }
 
         // Load existing identity
         const identity = await StorageManager.getIdentityByHandle(config.site, handle);
@@ -148,8 +195,21 @@ async function injectProfileEditor() {
         let identitiesCache = null;
         let isSavingFromDropdown = false;
         let isSaving = false;
+        let activeDropdownIndex = -1;
+
+        const updateDropdownSelection = () => {
+            const items = dropdown.querySelectorAll('.dropdown-item');
+            items.forEach((item, i) => {
+                if (i === activeDropdownIndex) {
+                    item.style.backgroundColor = "#f0f0f0";
+                } else {
+                    item.style.backgroundColor = "transparent";
+                }
+            });
+        };
 
         noteBox.addEventListener("input", async (e) => {
+            activeDropdownIndex = -1;
             const query = e.target.value.toLowerCase().trim();
             if (!query) {
                 dropdown.style.display = "none";
@@ -168,8 +228,9 @@ async function injectProfileEditor() {
             dropdown.innerHTML = "";
             if (matches.length > 0) {
                 dropdown.style.display = "block";
-                matches.forEach(match => {
+                matches.forEach((match, index) => {
                     const item = document.createElement("div");
+                    item.className = "dropdown-item";
                     item.textContent = match.name;
                     item.style.padding = "6px 8px";
                     item.style.cursor = "pointer";
@@ -177,8 +238,14 @@ async function injectProfileEditor() {
                     item.style.fontSize = "13px";
                     item.style.color = "#333";
                     
-                    item.addEventListener("mouseenter", () => item.style.backgroundColor = "#f0f0f0");
-                    item.addEventListener("mouseleave", () => item.style.backgroundColor = "transparent");
+                    item.addEventListener("mouseenter", () => {
+                        activeDropdownIndex = index;
+                        updateDropdownSelection();
+                    });
+                    item.addEventListener("mouseleave", () => {
+                        activeDropdownIndex = -1;
+                        updateDropdownSelection();
+                    });
                     
                     // mousedown fires before blur, allowing us to set the flag
                     item.addEventListener("mousedown", () => {
@@ -252,14 +319,32 @@ async function injectProfileEditor() {
         };
 
         noteBox.addEventListener("keydown", (e) => {
-            if (e.key === "Tab" && !noteBox.value && noteBox.dataset.autocomplete) {
+            const items = dropdown.querySelectorAll('.dropdown-item');
+            
+            if (e.key === "ArrowDown") {
+                e.preventDefault();
+                if (dropdown.style.display === "block" && items.length > 0) {
+                    activeDropdownIndex = (activeDropdownIndex + 1) % items.length;
+                    updateDropdownSelection();
+                }
+            } else if (e.key === "ArrowUp") {
+                e.preventDefault();
+                if (dropdown.style.display === "block" && items.length > 0) {
+                    activeDropdownIndex = (activeDropdownIndex - 1 + items.length) % items.length;
+                    updateDropdownSelection();
+                }
+            } else if (e.key === "Tab" && !noteBox.value && noteBox.dataset.autocomplete) {
                 e.preventDefault();
                 noteBox.value = noteBox.dataset.autocomplete;
                 // Just fill it in, they can press enter to save
             } else if (e.key === "Enter") {
                 e.preventDefault();
-                saveInput();
-                noteBox.blur();
+                if (dropdown.style.display === "block" && activeDropdownIndex >= 0 && items[activeDropdownIndex]) {
+                    items[activeDropdownIndex].click();
+                } else {
+                    saveInput();
+                    noteBox.blur();
+                }
             }
         });
         
@@ -278,10 +363,37 @@ async function injectNotesEverywhere() {
 
         const match = href.match(config.profileRegex);
         if (!match) continue;
-
+        
         const handle = match[1];
 
-        if (link.querySelector('img')) continue;
+        // Skip common non-profile links (especially important for HackerRank which uses broad match)
+        if (config.site === 'hackerrank' && HACKERRANK_RESERVED.includes(handle.toLowerCase())) {
+            continue;
+        }
+
+        // Universally prevent injecting notes on sub-tab links (e.g. /username/history or /profile/username/info)
+        // by verifying there are no extra path segments after the handle.
+        let strictRegexStr = config.profileRegex.source;
+        if (strictRegexStr.endsWith('$')) {
+            strictRegexStr = strictRegexStr.slice(0, -1);
+        }
+        const strictRegex = new RegExp(strictRegexStr + '\\/?(?:[?#].*)?$');
+        if (!strictRegex.test(href)) {
+            continue;
+        }
+
+
+        // Root cause fix: Structural/Navigation links vs User Mention links.
+        // A user mention link's primary purpose is displaying the user's handle.
+        // If the link text is completely different from the handle (like "Algorithm", "Submissions"),
+        // it is a structural link and should NOT be annotated.
+        const normalizedText = link.textContent.replace(/\s+/g, '').toLowerCase();
+        const handleLower = handle.toLowerCase();
+        
+        if (normalizedText !== handleLower && normalizedText !== '@' + handleLower) {
+            continue;
+        }
+
         if (link.parentNode.querySelector(`.cf-note-tag[data-handle="${handle}"]`)) continue;
 
         // Mark it tentatively so we don't fetch 100 times for the same handle while awaiting

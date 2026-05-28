@@ -1,0 +1,436 @@
+:root {
+    /* Light Theme (Material 3 Defaults) */
+    --md-sys-color-primary: #6750A4;
+    --md-sys-color-on-primary: #FFFFFF;
+    --md-sys-color-primary-container: #EADDFF;
+    --md-sys-color-on-primary-container: #21005D;
+    
+    --md-sys-color-background: #FFFBFE;
+    --md-sys-color-on-background: #1C1B1F;
+    --md-sys-color-surface: #FFFBFE;
+    --md-sys-color-on-surface: #1C1B1F;
+    --md-sys-color-surface-variant: #E7E0EC;
+    --md-sys-color-on-surface-variant: #49454F;
+    
+    --md-sys-color-outline: #79747E;
+    --md-sys-color-outline-variant: #CAC4D0;
+    --md-sys-color-error: #B3261E;
+
+    /* Elevated surface for cards */
+    --md-sys-color-surface-container-low: #F7F2F9;
+    --md-sys-color-surface-container: #F3EDF7;
+    --md-sys-color-surface-container-high: #ECE6F0;
+
+    --shimmer-base: #E7E0EC;
+    --shimmer-highlight: #F3EDF7;
+}
+
+[data-theme="dark"] {
+    /* Dark Theme */
+    --md-sys-color-primary: #D0BCFF;
+    --md-sys-color-on-primary: #381E72;
+    --md-sys-color-primary-container: #4F378B;
+    --md-sys-color-on-primary-container: #EADDFF;
+    
+    --md-sys-color-background: #1C1B1F;
+    --md-sys-color-on-background: #E6E1E5;
+    --md-sys-color-surface: #1C1B1F;
+    --md-sys-color-on-surface: #E6E1E5;
+    --md-sys-color-surface-variant: #49454F;
+    --md-sys-color-on-surface-variant: #CAC4D0;
+    
+    --md-sys-color-outline: #938F99;
+    --md-sys-color-outline-variant: #49454F;
+    --md-sys-color-error: #F2B8B5;
+
+    --md-sys-color-surface-container-low: #1D1B20;
+    --md-sys-color-surface-container: #211F26;
+    --md-sys-color-surface-container-high: #2B2930;
+
+    --shimmer-base: #2B2930;
+    --shimmer-highlight: #49454F;
+}
+
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: var(--md-sys-color-background);
+    color: var(--md-sys-color-on-background);
+    margin: 0;
+    padding: 0;
+    width: 400px;
+    height: 600px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 120px; /* Starts just under the search bar */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('Full_logo.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.04;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.app-bar {
+    background-color: #040a16;
+    color: #ffffff;
+    padding: 12px 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.app-bar-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    max-width: 140px;
+    height: 32px;
+    object-fit: contain;
+}
+
+.icon-button {
+    background: transparent;
+    border: none;
+    color: var(--md-sys-color-on-surface-variant);
+    cursor: pointer;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.icon-button:hover {
+    background-color: var(--md-sys-color-surface-variant);
+    color: var(--md-sys-color-on-surface);
+}
+
+.icon-button:active {
+    background-color: var(--md-sys-color-outline-variant);
+}
+
+/* Ensure the settings button in the dark app-bar is visible */
+.app-bar .icon-button {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.app-bar .icon-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.app-bar .icon-button:active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: var(--md-sys-color-surface-container-high);
+    border-radius: 24px;
+    padding: 4px 16px;
+    transition: background-color 0.2s ease;
+}
+
+.search-container:focus-within {
+    background-color: var(--md-sys-color-primary-container);
+}
+
+.search-icon {
+    color: var(--md-sys-color-on-surface-variant);
+    margin-right: 8px;
+}
+
+.search-container:focus-within .search-icon {
+    color: var(--md-sys-color-on-primary-container);
+}
+
+.search-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 8px 0;
+    font-size: 14px;
+    color: var(--md-sys-color-on-surface);
+    outline: none;
+}
+
+.search-input::placeholder {
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+.view {
+    display: none;
+    flex: 1;
+    overflow-y: auto;
+    background-color: var(--md-sys-color-background);
+}
+
+.view.active {
+    display: flex;
+    flex-direction: column;
+}
+
+.contacts-list {
+    list-style: none;
+    padding: 12px 16px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.contact-card {
+    background: var(--md-sys-color-surface-container);
+    border-radius: 16px;
+    padding: 16px;
+    transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.contact-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background: var(--md-sys-color-surface-container-high);
+    border-color: var(--md-sys-color-outline-variant);
+}
+
+.contact-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.contact-name {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 0 12px 0;
+    color: var(--md-sys-color-on-surface);
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    color: var(--md-sys-color-error);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    opacity: 0.6;
+    transition: opacity 0.2s, background-color 0.2s;
+    display: flex;
+}
+
+.delete-btn:hover {
+    opacity: 1;
+    background-color: rgba(179, 38, 30, 0.1);
+}
+
+.delete-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.contact-handles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.badge {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 10px 4px 6px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: var(--md-sys-color-surface-variant);
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+.platform-logo {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+.contact-notes {
+    font-size: 14px;
+    color: var(--md-sys-color-on-surface-variant);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Skeleton Shimmer */
+@keyframes shimmer {
+    0% { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+}
+
+.skeleton {
+    background: linear-gradient(90deg, var(--shimmer-base) 25%, var(--shimmer-highlight) 50%, var(--shimmer-base) 75%);
+    background-size: 400px 100%;
+    animation: shimmer 1.5s infinite linear;
+    border-radius: 4px;
+}
+
+.skeleton-card {
+    background: var(--md-sys-color-surface-container);
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.skeleton-title { height: 20px; width: 50%; }
+.skeleton-badge { height: 24px; width: 30%; border-radius: 16px; }
+.skeleton-text { height: 14px; width: 80%; }
+.skeleton-text-short { height: 14px; width: 60%; }
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--md-sys-color-on-surface-variant);
+    flex: 1;
+}
+
+.empty-state svg {
+    width: 64px;
+    height: 64px;
+    color: var(--md-sys-color-outline-variant);
+    margin-bottom: 16px;
+}
+
+.empty-state p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* Settings View */
+#settings-view {
+    padding: 0;
+}
+
+.settings-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    background-color: var(--md-sys-color-surface);
+}
+
+.settings-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--md-sys-color-on-surface);
+}
+
+.settings-content {
+    padding: 16px;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--md-sys-color-surface-container);
+    border-radius: 16px;
+}
+
+.setting-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.setting-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--md-sys-color-on-surface);
+}
+
+.setting-desc {
+    font-size: 13px;
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+/* Toggle Switch Material 3 Style */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 32px;
+}
+
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: var(--md-sys-color-surface-variant);
+    transition: .3s;
+    border-radius: 32px;
+    border: 2px solid var(--md-sys-color-outline);
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 6px;
+    bottom: 6px;
+    background-color: var(--md-sys-color-outline);
+    transition: .3s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--md-sys-color-primary);
+    border-color: var(--md-sys-color-primary);
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+    background-color: var(--md-sys-color-on-primary);
+    height: 24px;
+    width: 24px;
+    left: 4px;
+    bottom: 2px;
+}
