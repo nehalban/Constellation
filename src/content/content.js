@@ -61,7 +61,7 @@ let currentDropdown = null;
 // Initialize the content script after StorageManager is loaded
 async function initContentScript() {
     try {
-        const url = chrome.runtime.getURL('storageManager.js');
+        const url = chrome.runtime.getURL('src/utils/storageManager.js');
         const module = await import(url);
         StorageManager = module.StorageManager;
         

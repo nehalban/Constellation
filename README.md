@@ -2,9 +2,9 @@
 A Chrome extension that takes the guesswork out of wacky competitive programming handles. Constellation links real names to user profiles across multiple platforms and displays those names everywhere the handle appears, keeping your network clear and organized.
 
 ## 📸 See it in Action
-![Codeforces profile interface](<Screenshot 2026-05-28 221112.png>)
-![Extension popup interface](<Screenshot 2026-05-28 221145.png>)
-![HackerRank profile interface](<Screenshot 2026-05-28 221213.png>)
+![Codeforces profile interface](<screenshots/Screenshot 2026-05-28 221112.png>)
+![Extension popup interface](<screenshots/Screenshot 2026-05-28 221145.png>)
+![HackerRank profile interface](<screenshots/Screenshot 2026-05-28 221213.png>)
 
 ## ✨ Key Features at a Glance
 - **No More Guessing:** Real names render inline next to usernames everywhere—leaderboards, standings, and comments.
@@ -18,6 +18,30 @@ A Chrome extension that takes the guesswork out of wacky competitive programming
 - **Cross-Device Sync:** Your contacts are automatically synchronized across all your Chrome browsers.
 
 - **Privacy First:** All data is strictly kept in your browser's local sync storage. No external servers, no tracking.
+
+## 📁 Directory Structure
+```
+constellation/
+├── src/
+│   ├── background/
+│   │   └── background.js
+│   ├── content/
+│   │   └── content.js
+│   ├── popup/
+│   │   ├── popup.html
+│   │   ├── popup.css
+│   │   └── popup.js
+│   └── utils/
+│       └── storageManager.js
+├── assets/
+│   └── images/
+│       ├── logo.png
+│       ├── logo_icon.png
+│       └── Platform Logos/
+├── screenshots/
+│   └── Screenshot*.png
+└── manifest.json
+```
 
 ## 🛠️ Under the Hood
 Constellation is built to be lightweight and fast so it never bogs down your browser during a contest.

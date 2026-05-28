@@ -1,4 +1,4 @@
-import { StorageManager } from './storageManager.js';
+import { StorageManager } from '../utils/storageManager.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     // DOM Elements
@@ -136,13 +136,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                         badge.className = `badge ${platform}`;
                         let logoSrc = '';
                         if (platform === 'codeforces') {
-                            logoSrc = 'Platform Logos/CodeForces.png';
+                            logoSrc = '../../assets/images/Platform Logos/CodeForces.png';
                         } else if (platform === 'atcoder') {
-                            logoSrc = 'Platform Logos/AtCoder.webp';
+                            logoSrc = '../../assets/images/Platform Logos/AtCoder.webp';
                         } else if (platform === 'leetcode') {
-                            logoSrc = 'Platform Logos/LeetCode.png';
+                            logoSrc = '../../assets/images/Platform Logos/LeetCode.png';
                         } else if (platform === 'hackerrank') {
-                            logoSrc = 'Platform Logos/HackerRank.png';
+                            logoSrc = '../../assets/images/Platform Logos/HackerRank.png';
                         }
                         
                         if (logoSrc) {

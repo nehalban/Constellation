@@ -1,4 +1,4 @@
-import { StorageManager } from './storageManager.js';
+import { StorageManager } from '../utils/storageManager.js';
 
 /**
  * Service Worker (Background Script) for Constellation
