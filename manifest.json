@@ -13,7 +13,11 @@
         "*://leetcode.com/*",
         "*://*.leetcode.com/*",
         "*://hackerrank.com/*",
-        "*://*.hackerrank.com/*"
+        "*://*.hackerrank.com/*",
+        "*://kaggle.com/*",
+        "*://*.kaggle.com/*",
+        "*://geeksforgeeks.org/*",
+        "*://*.geeksforgeeks.org/*"
       ],
       "js": [ "content.js" ]
     }
@@ -38,7 +42,11 @@
         "*://leetcode.com/*",
         "*://*.leetcode.com/*",
         "*://hackerrank.com/*",
-        "*://*.hackerrank.com/*"
+        "*://*.hackerrank.com/*",
+        "*://kaggle.com/*",
+        "*://*.kaggle.com/*",
+        "*://geeksforgeeks.org/*",
+        "*://*.geeksforgeeks.org/*"
       ]
     }
   ],

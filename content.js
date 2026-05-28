@@ -26,6 +26,22 @@ if (hostname.includes("atcoder.jp")) {
         linkSelector: "a[href^='/']",
         realNameSelector: ".hr-heading-02.profile-title.ellipsis, .profile-real-name, p.profile-real-name"
     };
+} else if (hostname.includes("kaggle.com")) {
+    config = {
+        site: "kaggle",
+        profileRegex: /^\/([^/?#]+)/,
+        profileTitleSelector: "h1, [class*='profile-name'], [class*='name']",
+        linkSelector: "a[href^='/']",
+        realNameSelector: "h1, [class*='real-name']"
+    };
+} else if (hostname.includes("geeksforgeeks.org")) {
+    config = {
+        site: "geeksforgeeks",
+        profileRegex: /^\/(?:user|profile)\/([^/?#]+)/,
+        profileTitleSelector: ".profile_name, h1, .userName, [class*='profile-name']",
+        linkSelector: "a[href*='/user/']",
+        realNameSelector: ".profile_name, h1"
+    };
 } else {
     // Default to codeforces
     config = {
@@ -86,8 +102,9 @@ async function injectProfileEditor() {
 
     const handle = urlMatch[1];
     
-    // Prevent injecting textboxes on HackerRank system pages that mimic profile URLs
-    if (config.site === 'hackerrank' && HACKERRANK_RESERVED.includes(handle.toLowerCase())) {
+    // Prevent injecting textboxes on HackerRank or Kaggle system pages that mimic profile URLs
+    const isSystemPage = (config.site === 'hackerrank' || config.site === 'kaggle') && HACKERRANK_RESERVED.includes(handle.toLowerCase());
+    if (isSystemPage) {
         return;
     }
 
@@ -366,8 +383,9 @@ async function injectNotesEverywhere() {
         
         const handle = match[1];
 
-        // Skip common non-profile links (especially important for HackerRank which uses broad match)
-        if (config.site === 'hackerrank' && HACKERRANK_RESERVED.includes(handle.toLowerCase())) {
+        // Skip common non-profile links (especially important for HackerRank/Kaggle which uses broad match)
+        const isSystemPage = (config.site === 'hackerrank' || config.site === 'kaggle') && HACKERRANK_RESERVED.includes(handle.toLowerCase());
+        if (isSystemPage) {
             continue;
         }
 

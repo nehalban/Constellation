@@ -1,39 +1,70 @@
-# Constellation
+# Constellation 🌌
+A Chrome extension that takes the guesswork out of wacky competitive programming handles. Constellation links real names to user profiles across multiple platforms and displays those names everywhere the handle appears, keeping your network clear and organized.
 
-A Chrome browser extension that allows you to add personal notes to your Codeforces, AtCoder, LeetCode, and HackerRank friends. These notes are visible everywhere on the site and sync across all your devices.
+## 📸 See it in Action
+![Codeforces profile interface](<Screenshot 2026-05-28 221112.png>)
+![Extension popup interface](<Screenshot 2026-05-28 221145.png>)
+![HackerRank profile interface](<Screenshot 2026-05-28 221213.png>)
 
-## Features
+## ✨ Key Features at a Glance
+- **No More Guessing:** Real names render inline next to usernames everywhere—leaderboards, standings, and comments.
 
-- **Multi-Platform Support** - Works seamlessly on Codeforces.com, AtCoder.jp, LeetCode.com, and HackerRank.com
-- **Smart Autocomplete & Identity Linking** - Link multiple handles across different platforms to a single person. Suggests existing contacts and auto-extracts real names from profiles as you type.
-- **Extension Popup Dashboard** - Easily view all your contacts in one place, search through them by name, handle, or notes, and manage or delete entries.
-- **Add personal notes** to any user on their profile page
-- **See notes everywhere** - Notes appear next to usernames throughout the site (standings, comments, etc.)
-- **Cross-device sync** - Your notes are automatically synced across all your Chrome browsers via `chrome.storage.sync`
-- **Dynamic DOM Handling & Real-Time Updates** - Uses `MutationObserver` to instantly render notes on paginated standings and dynamic AJAX content, automatically updating visuals across tabs without needing a page refresh.
+- **Unified Contacts Dashboard:** Use the extension popup as your master directory. All of a person's linked handles are grouped in one place, allowing you to open any of their profiles on any platform in a single click.
 
-## Installation
+- **Smart Suggestions:** Link multiple handles across different platforms to a single person. Suggests existing contacts and auto-extracts real names from profiles as you type.
 
-1. Download or clone this repository
-2. Open Chrome and navigate to `chrome://extensions/`
-3. Enable "Developer mode" in the top right corner
-4. Click "Load unpacked" and select the extension folder
-5. The extension is now active on Codeforces, AtCoder, LeetCode, and HackerRank!
+- **Universal Platform Support:** Works flawlessly across Codeforces, AtCoder, LeetCode, HackerRank, Kaggle, and GeeksforGeeks.
 
-## How to Use
+- **Cross-Device Sync:** Your contacts are automatically synchronized across all your Chrome browsers.
 
-### Adding Notes
-1. Visit any user's profile page (e.g., `/profile/username` on CF, `/users/username` on AtCoder, `/u/username` on LeetCode, or `/profile/username` on HackerRank)
-2. You'll see a "Constellation:" label and a text input box near the user's name/title
-3. Type your note and press Enter or click outside the box to save
+- **Privacy First:** All data is strictly kept in your browser's local sync storage. No external servers, no tracking.
 
-### Viewing Notes
-Notes appear as gray text in parentheses next to usernames. You'll see them in contest standings, comment sections, user lists, and anywhere a profile link is referenced.
+## 🛠️ Under the Hood
+Constellation is built to be lightweight and fast so it never bogs down your browser during a contest.
 
-## Technical Details
+- **Architecture:** Fully upgraded to and compliant with Manifest V3.
 
-- `manifest.json` - Upgraded to Manifest V3 permissions
-- `content.js` - Contains platform detection logic, regex-based URL parsing to avoid badge/text conflict bugs, and `MutationObserver` to handle single-page application behavior smoothly.
+- **Dynamic Rendering:** Heavily utilizes MutationObserver to handle complex, single-page application behaviors. This ensures names render instantly on paginated standings and dynamic AJAX content without performance bottlenecks.
+
+- **Data Persistence:** Leverages the native chrome.storage.sync API for seamless cross-device synchronization without the need for a custom backend.
+
+- **Safe Parsing:** Implements regex-based URL parsing and precise platform detection logic to inject DOM elements cleanly without breaking native site badges or UI layouts.
+
+## 🚀 Quick Install
+
+1. Download or clone this repository to your machine.
+2. Open Chrome and navigate to `chrome://extensions/`.
+3. Toggle Developer mode on in the top right corner.
+4. Click `Load unpacked` and select the Constellation extension folder.
+5. Pin the extension to your toolbar and start building your contacts list!
 
 ## Privacy
 All notes are stored locally in your browser's sync storage. No data is sent to external servers, and the extension runs solely on the designated domains.
+
+## 🤝 How to Contribute
+Constellation is open-source and community-driven! Whether you want to add support for a new competitive programming platform, optimize the DOM logic, or fix a UI bug, contributions are highly encouraged.
+
+To get started:
+
+1. Fork the repository.
+
+2. Create a new branch for your feature (git checkout -b feature/NewPlatformSupport).
+3. Commit your changes (git commit -m 'Add support for Platform X').
+4. Push to your branch (git push origin feature/NewPlatformSupport).
+5. Open a Pull Request detailing your changes.
+
+If you've found a bug or have a major feature idea, please open an Issue first so we can discuss the implementation!
+
+
+
+
+
+
+
+
+## How to Use
+1. Visit any user's profile page (e.g., `/profile/username` on CF, `/users/username` on AtCoder, `/u/username` on LeetCode, `/profile/username` on HackerRank, `/username` on Kaggle, or `/user/username` on GeeksforGeeks)
+2. You'll see a "Constellation:" label and a text input box near the user's name/title
+3. Type your note and press Enter or click outside the box to save
+
+
