@@ -100,16 +100,26 @@
         </div>
         <div class="platforms-toolbar">
             <input type="text" id="platform-search" class="platform-search-input" placeholder="Filter friends...">
-            <select id="platform-list-filter" class="list-filter-select">
-                <option value="all">All Lists</option>
-            </select>
-            <select id="platform-sort" class="platform-sort-select">
-                <option value="alpha">Alphabetical</option>
-                <option value="rating-desc">Rating (High to Low)</option>
-                <option value="rating-asc">Rating (Low to High)</option>
-                <option value="active-desc">Last Active (Recent First)</option>
-                <option value="active-asc">Last Active (Oldest First)</option>
-            </select>
+            <div class="icon-dropdown-container" id="list-filter-container">
+                <svg viewBox="0 0 24 24" fill="currentColor" class="toolbar-icon" width="20" height="20" title="Filter by list">
+                    <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
+                </svg>
+                <select id="platform-list-filter" class="invisible-select" title="Filter by list">
+                    <option value="all">All Lists</option>
+                </select>
+            </div>
+            <div class="icon-dropdown-container" id="sort-filter-container">
+                <svg viewBox="0 0 24 24" fill="currentColor" class="toolbar-icon" width="20" height="20" title="Sort by">
+                    <path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/>
+                </svg>
+                <select id="platform-sort" class="invisible-select" title="Sort by">
+                    <option value="alpha">Alphabetical</option>
+                    <option value="rating-desc">Rating (High to Low)</option>
+                    <option value="rating-asc">Rating (Low to High)</option>
+                    <option value="active-desc">Last Active (Recent First)</option>
+                    <option value="active-asc">Last Active (Oldest First)</option>
+                </select>
+            </div>
         </div>
         <div class="platforms-content">
             <ul id="platform-friends-list" class="contacts-list">

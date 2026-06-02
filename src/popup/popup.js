@@ -72,9 +72,31 @@ document.addEventListener('DOMContentLoaded', async () => {
         platformsView.classList.add('active');
         document.querySelector('.search-container').style.display = 'none';
         
-        // Render platforms if already selected
-        if (platformSelector.value) {
-            renderPlatformFriends(platformSelector.value);
+        if (typeof chrome !== 'undefined' && chrome.tabs) {
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                if (tabs && tabs.length > 0) {
+                    const url = tabs[0].url || '';
+                    let detectedPlatform = null;
+                    if (url.includes('codeforces.com')) detectedPlatform = 'codeforces';
+                    else if (url.includes('leetcode.com')) detectedPlatform = 'leetcode';
+                    else if (url.includes('hackerrank.com')) detectedPlatform = 'hackerrank';
+                    else if (url.includes('atcoder.jp')) detectedPlatform = 'atcoder';
+                    else if (url.includes('kaggle.com')) detectedPlatform = 'kaggle';
+                    else if (url.includes('geeksforgeeks.org')) detectedPlatform = 'geeksforgeeks';
+
+                    if (detectedPlatform && platformSelector.value !== detectedPlatform) {
+                        platformSelector.value = detectedPlatform;
+                    }
+                    
+                    if (platformSelector.value) {
+                        renderPlatformFriends(platformSelector.value);
+                    }
+                }
+            });
+        } else {
+            if (platformSelector.value) {
+                renderPlatformFriends(platformSelector.value);
+            }
         }
     });
 
@@ -822,9 +844,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderPlatformFriends(e.target.value);
     });
 
+    const updateFilterHighlights = () => {
+        const listFilterContainer = document.getElementById('list-filter-container');
+        if (listFilterContainer) {
+            if (platformListFilter.value === 'all') listFilterContainer.classList.remove('active');
+            else listFilterContainer.classList.add('active');
+        }
+
+        const sortFilterContainer = document.getElementById('sort-filter-container');
+        if (sortFilterContainer) {
+            if (platformSortSelect.value === 'alpha') sortFilterContainer.classList.remove('active');
+            else sortFilterContainer.classList.add('active');
+        }
+    };
+
     platformSearchInput.addEventListener('input', applyPlatformFiltersAndSort);
-    platformSortSelect.addEventListener('change', applyPlatformFiltersAndSort);
-    platformListFilter.addEventListener('change', applyPlatformFiltersAndSort);
+    platformListFilter.addEventListener('change', () => {
+        updateFilterHighlights();
+        applyPlatformFiltersAndSort();
+    });
+    platformSortSelect.addEventListener('change', () => {
+        updateFilterHighlights();
+        applyPlatformFiltersAndSort();
+    });
 
     // --- Event Listeners ---
     searchInput.addEventListener('input', filterAndRender);
