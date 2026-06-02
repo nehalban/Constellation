@@ -101,14 +101,17 @@ export class StorageManager {
         const { identities, lookup_index } = await this.getData();
         
         const id = identityData.id || this.generateId();
-        const existingIdentity = identities[id] || { handles: {} };
+        const existingIdentity = identities[id] || {};
         
         const newIdentity = {
-            id,
-            name: identityData.name !== undefined ? identityData.name : (existingIdentity.name || ''),
-            notes: identityData.notes !== undefined ? identityData.notes : (existingIdentity.notes || ''),
-            tags: identityData.tags !== undefined ? identityData.tags : (existingIdentity.tags || []),
-            handles: identityData.handles !== undefined ? identityData.handles : (existingIdentity.handles || {})
+            handles: {},
+            tags: [],
+            lists: [],
+            notes: '',
+            name: '',
+            ...existingIdentity,
+            ...identityData,
+            id
         };
 
         // Check for handle conflicts and migrate handles from old identities
@@ -157,31 +160,7 @@ export class StorageManager {
             if (duplicates.length > 0) {
                 const primary = identities[id];
                 for (const dupId of duplicates) {
-                    const dup = identities[dupId];
-                    // Merge notes
-                    if (dup.notes) {
-                        primary.notes = primary.notes ? `${primary.notes}\n---\n${dup.notes}` : dup.notes;
-                    }
-                    // Merge tags
-                    if (dup.tags && dup.tags.length > 0) {
-                        const mergedTags = new Set([...(primary.tags || []), ...dup.tags]);
-                        primary.tags = Array.from(mergedTags);
-                    }
-                    // Merge handles
-                    const dupHandles = dup.handles || {};
-                    primary.handles = primary.handles || {};
-                    
-                    for (const [platform, platHandles] of Object.entries(dupHandles)) {
-                        primary.handles[platform] = primary.handles[platform] || [];
-                        for (const h of platHandles) {
-                            if (!primary.handles[platform].includes(h)) {
-                                primary.handles[platform].push(h);
-                            }
-                            const key = `${platform}_${h}`;
-                            lookup_index[key] = id; // Point existing handle to new primary identity
-                        }
-                    }
-                    // Delete the duplicate identity
+                    this._mergeIdentities(primary, identities[dupId], lookup_index);
                     delete identities[dupId];
                 }
             }
@@ -189,6 +168,35 @@ export class StorageManager {
 
         await this.saveData(identities, lookup_index);
         return id;
+    }
+
+    /**
+     * Helper to merge a duplicate identity into a primary one.
+     */
+    static _mergeIdentities(primary, dup, lookup_index) {
+        if (dup.notes) {
+            primary.notes = primary.notes ? `${primary.notes}\n---\n${dup.notes}` : dup.notes;
+        }
+        if (dup.tags && dup.tags.length > 0) {
+            primary.tags = Array.from(new Set([...(primary.tags || []), ...dup.tags]));
+        }
+        if (dup.lists && dup.lists.length > 0) {
+            primary.lists = Array.from(new Set([...(primary.lists || []), ...dup.lists]));
+        }
+        
+        const dupHandles = dup.handles || {};
+        primary.handles = primary.handles || {};
+        
+        for (const [platform, platHandles] of Object.entries(dupHandles)) {
+            primary.handles[platform] = primary.handles[platform] || [];
+            for (const h of platHandles) {
+                if (!primary.handles[platform].includes(h)) {
+                    primary.handles[platform].push(h);
+                }
+                const key = `${platform}_${h}`;
+                lookup_index[key] = primary.id; 
+            }
+        }
     }
 
     /**

@@ -3,7 +3,7 @@
   "name": "Constellation",
   "version": "2.0",
   "description": "Add personal notes to Codeforces, AtCoder, LeetCode, and HackerRank friends. Visible everywhere, synced across devices.",
-  "permissions": [ "storage" ],
+  "permissions": [ "storage", "activeTab" ],
   "content_scripts": [
     {
       "matches": [ 

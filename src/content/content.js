@@ -30,7 +30,7 @@ if (hostname.includes("atcoder.jp")) {
     config = {
         site: "kaggle",
         profileRegex: /^\/([^/?#]+)/,
-        profileTitleSelector: "h1, [class*='profile-name'], [class*='name']",
+        profileTitleSelector: ".sc-fUTThT.gXvkDd, h1, [class*='profile-name'], [class*='name']",
         linkSelector: "a[href^='/']",
         realNameSelector: "h1, [class*='real-name']"
     };
@@ -38,9 +38,9 @@ if (hostname.includes("atcoder.jp")) {
     config = {
         site: "geeksforgeeks",
         profileRegex: /^\/(?:user|profile)\/([^/?#]+)/,
-        profileTitleSelector: ".profile_name, h1, .userName, [class*='profile-name']",
+        profileTitleSelector: ".NewProfile_profile__FHfgW, .profile_name, h1, .userName, [class*='profile-name']",
         linkSelector: "a[href*='/user/']",
-        realNameSelector: ".profile_name, h1"
+        realNameSelector: ".NewProfile_name__N_Nlw, .profile_name, h1"
     };
 } else {
     // Default to codeforces
@@ -66,11 +66,31 @@ async function initContentScript() {
         StorageManager = module.StorageManager;
         
         injectProfileEditor();
-        injectNotesEverywhere();
+        chrome.storage.local.get(['showBadges'], (res) => {
+            if (res.showBadges !== false) {
+                injectNotesEverywhere();
+            }
+        });
 
-        const observer = new MutationObserver(() => {
-            injectProfileEditor();
-            injectNotesEverywhere();
+        let debounceTimeout = null;
+        const observer = new MutationObserver((mutations) => {
+            // Ignore mutations caused by our own injections to prevent infinite loops
+            const isSelfMutation = mutations.every(m => {
+                const target = m.target;
+                return target.classList && (target.classList.contains('cf-note-tag') || target.classList.contains('cf-note-profile-container') || target.closest('.cf-note-profile-container'));
+            });
+            
+            if (isSelfMutation) return;
+
+            if (debounceTimeout) clearTimeout(debounceTimeout);
+            debounceTimeout = setTimeout(() => {
+                injectProfileEditor();
+                chrome.storage.local.get(['showBadges'], (res) => {
+                    if (res.showBadges !== false) {
+                        injectNotesEverywhere();
+                    }
+                });
+            }, 300);
         });
         observer.observe(document.body, { childList: true, subtree: true });
 
@@ -79,7 +99,11 @@ async function initContentScript() {
             if (message.type === 'STATE_SYNC_UPDATE') {
                 // Refresh visuals if state changes
                 injectProfileEditor();
-                injectNotesEverywhere();
+                chrome.storage.local.get(['showBadges'], (res) => {
+                    if (res.showBadges !== false) {
+                        injectNotesEverywhere();
+                    }
+                });
             }
         });
 
@@ -137,6 +161,8 @@ async function injectProfileEditor() {
         noteBox.style.border = "1px solid #ccc";
         noteBox.style.borderRadius = "4px";
         noteBox.style.fontWeight = "normal";
+        noteBox.style.backgroundColor = "transparent";
+        noteBox.style.color = "inherit";
 
         if (config.site === 'hackerrank' && titleEl.classList.contains('profile-sidebar')) {
             container.style.display = "block";
@@ -170,7 +196,7 @@ async function injectProfileEditor() {
         container.appendChild(noteBox);
         container.appendChild(dropdown);
         
-        if (config.site === 'leetcode') {
+        if (['leetcode', 'kaggle', 'geeksforgeeks'].includes(config.site)) {
             container.style.display = "block";
             container.style.marginLeft = "0";
             container.style.marginTop = "8px";
@@ -375,13 +401,27 @@ async function injectNotesEverywhere() {
     
     // Process links asynchronously but avoid overlapping duplicate injections
     for (const link of userLinks) {
-        const href = link.getAttribute("href");
-        if (!href) continue;
+        if (link.dataset.noteInjecting === "true") continue;
+        if (link.parentNode.querySelector(`.cf-note-tag[data-handle]`)) {
+            link.dataset.noteInjecting = "true";
+            continue;
+        }
 
-        const match = href.match(config.profileRegex);
-        if (!match) continue;
-        
-        const handle = match[1];
+        let handle = link.dataset.cachedHandle;
+
+        if (!handle) {
+            const href = link.getAttribute("href");
+            if (!href) continue;
+
+            const match = href.match(config.profileRegex);
+            if (!match) {
+                link.dataset.noteInjecting = "true"; // mark as invalid so we skip next time
+                continue;
+            }
+            
+            handle = match[1];
+            link.dataset.cachedHandle = handle;
+        }
 
         // Skip common non-profile links (especially important for HackerRank/Kaggle which uses broad match)
         const isSystemPage = (config.site === 'hackerrank' || config.site === 'kaggle') && HACKERRANK_RESERVED.includes(handle.toLowerCase());

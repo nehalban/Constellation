@@ -11,7 +11,15 @@ A Chrome extension that takes the guesswork out of wacky competitive programming
 
 - **Unified Contacts Dashboard:** Use the extension popup as your master directory. All of a person's linked handles are grouped in one place, allowing you to open any of their profiles on any platform in a single click.
 
+- **Platform Leaderboards:** View your friends' ratings and last active statuses directly inside the extension. Sort by Alphabetical, Rating, or Last Active.
+
+- **Problem Context Banner (Codeforces):** Click the extension while viewing any Codeforces problem and instantly see exactly which of your friends have attempted or solved it.
+
+- **Custom Lists & Filtering:** Organize your contacts into groups (e.g., "Study Group", "Rivals"). Filter your master directory or platform leaderboards by these custom lists!
+
 - **Smart Suggestions:** Link multiple handles across different platforms to a single person. Suggests existing contacts and auto-extracts real names from profiles as you type.
+
+- **Data Management:** Export your entire contact directory as a JSON backup, import data seamlessly, or clear your history from the Settings view.
 
 - **Universal Platform Support:** Works flawlessly across Codeforces, AtCoder, LeetCode, HackerRank, Kaggle, and GeeksforGeeks.
 
@@ -30,7 +38,8 @@ constellation/
 │   ├── popup/
 │   │   ├── popup.html
 │   │   ├── popup.css
-│   │   └── popup.js
+│   │   ├── popup.js
+│   │   └── settings.js
 │   └── utils/
 │       └── storageManager.js
 ├── assets/
@@ -46,13 +55,15 @@ constellation/
 ## 🛠️ Under the Hood
 Constellation is built to be lightweight and fast so it never bogs down your browser during a contest.
 
-- **Architecture:** Fully upgraded to and compliant with Manifest V3.
+- **Architecture:** Fully upgraded to and compliant with Manifest V3. The popup UI is built using ES modules for a clean, modular codebase.
 
-- **Dynamic Rendering:** Heavily utilizes MutationObserver to handle complex, single-page application behaviors. This ensures names render instantly on paginated standings and dynamic AJAX content without performance bottlenecks.
+- **Rate Limiting Engine:** A custom background `RequestQueue` strictly throttles API requests (e.g., Codeforces) to prevent HTTP 429/503 limits and IP bans while aggregating stats.
 
-- **Data Persistence:** Leverages the native chrome.storage.sync API for seamless cross-device synchronization without the need for a custom backend.
+- **Dynamic Rendering:** Heavily utilizes heavily-optimized, debounced `MutationObserver`s to handle complex single-page application behaviors without creating infinite loops or performance bottlenecks.
 
-- **Safe Parsing:** Implements regex-based URL parsing and precise platform detection logic to inject DOM elements cleanly without breaking native site badges or UI layouts.
+- **Data Persistence:** Leverages the native `chrome.storage.sync` API for seamless cross-device synchronization.
+
+- **Safe Parsing:** Caches regex-based URL parsing results directly on DOM elements to avoid CPU-heavy recalculations while you scroll.
 
 ## 🚀 Quick Install
 
@@ -86,9 +97,11 @@ If you've found a bug or have a major feature idea, please open an Issue first s
 
 
 
-## How to Use
-1. Visit any user's profile page (e.g., `/profile/username` on CF, `/users/username` on AtCoder, `/u/username` on LeetCode, `/profile/username` on HackerRank, `/username` on Kaggle, or `/user/username` on GeeksforGeeks)
-2. You'll see a "Constellation:" label and a text input box near the user's name/title
-3. Type your note and press Enter or click outside the box to save
+## 💡 How to Use
+1. Visit any user's profile page (e.g., `/profile/username` on Codeforces, `/users/username` on AtCoder, `/u/username` on LeetCode, etc.).
+2. You'll see a "Constellation:" label and a text input box near the user's name/title.
+3. Type the user's real name and press Enter. The extension will automatically link this handle to their identity.
+4. Click the Constellation extension icon in your browser to open the popup dashboard.
+5. Explore the Master Directory, Platform Leaderboards, Custom Lists, and Settings!
 
 
