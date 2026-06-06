@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const contextFriendsList = document.getElementById('context-friends-list');
 
     let currentDetailContact = null;
+    let previousViewForDetail = mainView;
 
     let contacts = [];
     let currentPlatformData = [];
@@ -51,18 +52,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // --- Navigation Logic ---
     settingsBtn.addEventListener('click', () => {
-        const isSettingsOpen = settingsView.classList.contains('active');
-        if (isSettingsOpen) {
-            settingsView.classList.remove('active');
-            mainView.classList.add('active');
-            document.querySelector('.search-container').style.display = 'flex';
-        } else {
-            mainView.classList.remove('active');
-            detailView.classList.remove('active');
-            platformsView.classList.remove('active');
-            settingsView.classList.add('active');
-            document.querySelector('.search-container').style.display = 'none';
-        }
+        mainView.classList.remove('active');
+        detailView.classList.remove('active');
+        platformsView.classList.remove('active');
+        settingsView.classList.add('active');
+        document.querySelector('.search-container').style.display = 'none';
     });
 
     platformsBtn.addEventListener('click', () => {
@@ -114,8 +108,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     detailBackBtn.addEventListener('click', () => {
         detailView.classList.remove('active');
-        mainView.classList.add('active');
-        document.querySelector('.search-container').style.display = 'flex';
+        if (previousViewForDetail === platformsView) {
+            platformsView.classList.add('active');
+        } else {
+            mainView.classList.add('active');
+            document.querySelector('.search-container').style.display = 'flex';
+        }
         currentDetailContact = null;
     });
 
@@ -125,8 +123,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             try {
                 await StorageManager.deleteIdentity(currentDetailContact.id);
                 detailView.classList.remove('active');
-                mainView.classList.add('active');
-                document.querySelector('.search-container').style.display = 'flex';
+                if (previousViewForDetail === platformsView) {
+                    platformsView.classList.add('active');
+                } else {
+                    mainView.classList.add('active');
+                    document.querySelector('.search-container').style.display = 'flex';
+                }
                 currentDetailContact = null;
             } catch (err) {
                 alert(err.message);
@@ -327,7 +329,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
         
-        mainView.classList.remove('active');
+        if (platformsView.classList.contains('active')) {
+            previousViewForDetail = platformsView;
+            platformsView.classList.remove('active');
+        } else {
+            previousViewForDetail = mainView;
+            mainView.classList.remove('active');
+        }
         document.querySelector('.search-container').style.display = 'none';
         detailView.classList.add('active');
     };
@@ -693,7 +701,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         filteredData.sort((a, b) => {
             if (sortMode === 'alpha') {
                 return (a.contact.name || '').localeCompare(b.contact.name || '');
-            } else {
+            } else if (sortMode.startsWith('rating')) {
                 const parseRating = (r) => {
                     if (!r || r === 'Unrated' || r === 'N/A' || r === 'Error') return -1;
                     const parsed = parseInt(r, 10);
@@ -711,34 +719,27 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (sortMode === 'rating-desc') {
                     return ratingB - ratingA;
                 } else if (sortMode === 'rating-asc') {
-                    // rating-asc: push unrated (-1) to bottom or top?
-                    // "Rating (Low to High)", usually unrated stays at bottom.
                     if (ratingA === -1) return 1;
                     if (ratingB === -1) return -1;
                     return ratingA - ratingB;
-                } else {
-                    const parseDate = (d) => {
-                        if (!d || d === 'N/A' || d === 'Error') return 0;
-                        const date = new Date(d);
-                        return isNaN(date.getTime()) ? 0 : date.getTime();
-                    };
+                }
+            } else if (sortMode.startsWith('active')) {
+                const dateA = a.lastActiveParsed || 0;
+                const dateB = b.lastActiveParsed || 0;
 
-                    const dateA = parseDate(a.lastActive);
-                    const dateB = parseDate(b.lastActive);
+                if (dateA === dateB) {
+                    return (a.contact.name || '').localeCompare(b.contact.name || '');
+                }
 
-                    if (dateA === dateB) {
-                        return (a.contact.name || '').localeCompare(b.contact.name || '');
-                    }
-
-                    if (sortMode === 'active-desc') {
-                        return dateB - dateA;
-                    } else if (sortMode === 'active-asc') {
-                        if (dateA === 0) return 1;
-                        if (dateB === 0) return -1;
-                        return dateA - dateB;
-                    }
+                if (sortMode === 'active-desc') {
+                    return dateB - dateA;
+                } else if (sortMode === 'active-asc') {
+                    if (dateA === 0) return 1;
+                    if (dateB === 0) return -1;
+                    return dateA - dateB;
                 }
             }
+            return 0;
         });
 
         // Render
@@ -807,7 +808,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     contact: contact,
                     handle: handle,
                     rating: null,
-                    lastActive: null
+                    lastActive: null,
+                    lastActiveParsed: 0
                 });
             });
         });
@@ -828,9 +830,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (response) {
                         item.rating = response.rating || 'N/A';
                         item.lastActive = response.lastActive || 'N/A';
+                        item.lastActiveParsed = response.lastActiveParsed || 0;
                     } else {
                         item.rating = 'Error';
                         item.lastActive = 'Error';
+                        item.lastActiveParsed = 0;
                     }
                 });
                 

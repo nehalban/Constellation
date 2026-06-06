@@ -174,7 +174,8 @@ async function fetchBatchStats(platform, handles) {
                                 rating: user.rating ? user.rating.toString() : 'Unrated',
                                 lastActive: user.lastOnlineTimeSeconds 
                                     ? new Date(user.lastOnlineTimeSeconds * 1000).toLocaleDateString()
-                                    : 'N/A'
+                                    : 'N/A',
+                                lastActiveParsed: user.lastOnlineTimeSeconds ? user.lastOnlineTimeSeconds * 1000 : 0
                             };
                         });
                     }
@@ -209,7 +210,8 @@ async function fetchUserStats(platform, handle) {
                     : 'N/A';
                 return {
                     rating: user.rating ? user.rating.toString() : 'Unrated',
-                    lastActive
+                    lastActive,
+                    lastActiveParsed: user.lastOnlineTimeSeconds ? user.lastOnlineTimeSeconds * 1000 : 0
                 };
             }
         } else if (platform === 'leetcode') {

@@ -12,11 +12,11 @@ export class SettingsManager {
     }
 
     init(onStateChange) {
-        this.initTheming();
+        this.initTheming(onStateChange);
         this.initDataManagement(onStateChange);
     }
 
-    initTheming() {
+    initTheming(onStateChange) {
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.body.setAttribute('data-theme', 'dark');
@@ -39,14 +39,35 @@ export class SettingsManager {
         });
 
         this.badgesToggle.addEventListener('change', (e) => {
-            chrome.storage.local.set({ showBadges: e.target.checked });
+            chrome.storage.local.set({ showBadges: e.target.checked }, () => {
+                if (typeof chrome !== 'undefined' && chrome.tabs) {
+                    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+                        if (tabs[0] && tabs[0].url && tabs[0].url.includes('codeforces.com')) {
+                            chrome.tabs.reload(tabs[0].id);
+                        }
+                    });
+                }
+            });
+        });
+
+        this.contextBannerToggle.addEventListener('change', (e) => {
+            chrome.storage.local.set({ showContextBanner: e.target.checked });
+            const banner = document.getElementById('current-problem-context');
+            if (banner) {
+                if (!e.target.checked) {
+                    banner.style.display = 'none';
+                } else {
+                    if (onStateChange) onStateChange();
+                }
+            }
         });
     }
 
     initDataManagement(onStateChange) {
         this.exportBtn.addEventListener('click', async () => {
-            const data = await StorageManager.getAllIdentities();
-            const json = JSON.stringify(data, null, 2);
+            const data = await StorageManager.getData();
+            const identities = Object.values(data.identities || {});
+            const json = JSON.stringify(identities, null, 2);
             const blob = new Blob([json], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             
@@ -103,7 +124,7 @@ export class SettingsManager {
 
         this.clearBtn.addEventListener('click', async () => {
             if (confirm('Are you sure you want to permanently delete all your contacts? This cannot be undone.')) {
-                await StorageManager.clearAll();
+                await StorageManager.saveData({}, {});
                 if (onStateChange) onStateChange();
                 alert('All data cleared.');
             }

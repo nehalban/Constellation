@@ -408,12 +408,19 @@ async function injectNotesEverywhere() {
         }
 
         let handle = link.dataset.cachedHandle;
+        let pathToMatch = link.dataset.cachedPathToMatch;
+        const href = link.getAttribute("href");
+        
+        if (!href) continue;
 
-        if (!handle) {
-            const href = link.getAttribute("href");
-            if (!href) continue;
+        if (!handle || !pathToMatch) {
+            pathToMatch = href;
+            try {
+                const urlObj = new URL(href, window.location.origin);
+                pathToMatch = urlObj.pathname + urlObj.search + urlObj.hash;
+            } catch(e) {}
 
-            const match = href.match(config.profileRegex);
+            const match = pathToMatch.match(config.profileRegex);
             if (!match) {
                 link.dataset.noteInjecting = "true"; // mark as invalid so we skip next time
                 continue;
@@ -421,6 +428,7 @@ async function injectNotesEverywhere() {
             
             handle = match[1];
             link.dataset.cachedHandle = handle;
+            link.dataset.cachedPathToMatch = pathToMatch;
         }
 
         // Skip common non-profile links (especially important for HackerRank/Kaggle which uses broad match)
@@ -436,19 +444,29 @@ async function injectNotesEverywhere() {
             strictRegexStr = strictRegexStr.slice(0, -1);
         }
         const strictRegex = new RegExp(strictRegexStr + '\\/?(?:[?#].*)?$');
-        if (!strictRegex.test(href)) {
+        if (!strictRegex.test(pathToMatch)) {
             continue;
         }
-
 
         // Root cause fix: Structural/Navigation links vs User Mention links.
         // A user mention link's primary purpose is displaying the user's handle.
         // If the link text is completely different from the handle (like "Algorithm", "Submissions"),
         // it is a structural link and should NOT be annotated.
-        const normalizedText = link.textContent.replace(/\s+/g, '').toLowerCase();
         const handleLower = handle.toLowerCase();
+        const textContent = link.textContent.toLowerCase();
+        const textNoSpace = textContent.replace(/\s+/g, '');
         
-        if (normalizedText !== handleLower && normalizedText !== '@' + handleLower) {
+        let isUserMention = (textNoSpace === handleLower || textNoSpace === '@' + handleLower);
+        
+        if (!isUserMention) {
+            // Check if the text contains the handle with word boundaries (handles names, stars like "★ tourist")
+            const regex = new RegExp(`(^|[^a-z0-9_-])${handleLower}([^a-z0-9_-]|$)`);
+            if (regex.test(textContent)) {
+                isUserMention = true;
+            }
+        }
+        
+        if (!isUserMention) {
             continue;
         }
 

@@ -27,6 +27,7 @@
 
 [data-theme="dark"] {
     /* Dark Theme */
+    color-scheme: dark;
     --md-sys-color-primary: #D0BCFF;
     --md-sys-color-on-primary: #381E72;
     --md-sys-color-primary-container: #4F378B;
@@ -844,4 +845,23 @@ input:checked + .slider:before {
     cursor: pointer;
     appearance: none;
     -webkit-appearance: none;
+}
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--md-sys-color-outline-variant);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--md-sys-color-outline);
 }
