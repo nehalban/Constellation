@@ -52,6 +52,13 @@ constellation/
 └── manifest.json
 ```
 
+## 💡 How to Use
+1. Visit any user's profile page (e.g., `/profile/username` on Codeforces, `/users/username` on AtCoder, `/u/username` on LeetCode, etc.).
+2. You'll see a "Constellation:" label and a text input box near the user's name/title.
+3. Type the user's real name and press Enter. The extension will automatically link this handle to their identity.
+4. Click the Constellation extension icon in your browser to open the popup dashboard.
+5. Explore the Master Directory, Platform Leaderboards, Custom Lists, and Settings!
+
 ## 🛠️ Under the Hood
 Constellation is built to be lightweight and fast so it never bogs down your browser during a contest.
 
@@ -82,26 +89,9 @@ Constellation is open-source and community-driven! Whether you want to add suppo
 To get started:
 
 1. Fork the repository.
-
-2. Create a new branch for your feature (git checkout -b feature/NewPlatformSupport).
-3. Commit your changes (git commit -m 'Add support for Platform X').
-4. Push to your branch (git push origin feature/NewPlatformSupport).
+2. Create a new branch for your feature (`git checkout -b feature/NewPlatformSupport`).
+3. Commit your changes (`git commit -m 'Add support for Platform X'`).
+4. Push to your branch (`git push origin feature/NewPlatformSupport`).
 5. Open a Pull Request detailing your changes.
 
 If you've found a bug or have a major feature idea, please open an Issue first so we can discuss the implementation!
-
-
-
-
-
-
-
-
-## 💡 How to Use
-1. Visit any user's profile page (e.g., `/profile/username` on Codeforces, `/users/username` on AtCoder, `/u/username` on LeetCode, etc.).
-2. You'll see a "Constellation:" label and a text input box near the user's name/title.
-3. Type the user's real name and press Enter. The extension will automatically link this handle to their identity.
-4. Click the Constellation extension icon in your browser to open the popup dashboard.
-5. Explore the Master Directory, Platform Leaderboards, Custom Lists, and Settings!
-
-
