@@ -196,7 +196,24 @@ async function injectProfileEditor() {
         container.appendChild(noteBox);
         container.appendChild(dropdown);
         
-        if (['leetcode', 'kaggle', 'geeksforgeeks'].includes(config.site)) {
+        if (config.site === 'codeforces') {
+            container.style.display = "block";
+            container.style.marginLeft = "0";
+            container.style.marginTop = "8px";
+            container.style.marginBottom = "8px";
+            container.style.boxSizing = "border-box";
+            noteBox.style.padding = "4px 8px";
+            noteBox.style.backgroundColor = "transparent";
+            noteBox.style.color = "inherit";
+            noteBox.style.border = "1px solid #dcdcdc";
+            
+            const mainInfo = titleEl.closest('.main-info');
+            if (mainInfo) {
+                mainInfo.insertAdjacentElement("afterend", container);
+            } else {
+                titleEl.insertAdjacentElement("afterend", container);
+            }
+        } else if (['leetcode', 'kaggle', 'geeksforgeeks'].includes(config.site)) {
             container.style.display = "block";
             container.style.marginLeft = "0";
             container.style.marginTop = "8px";

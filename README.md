@@ -1,10 +1,20 @@
 # Constellation 🌌
 A Chrome extension that takes the guesswork out of wacky competitive programming handles. Constellation links real names to user profiles across multiple platforms and displays those names everywhere the handle appears, keeping your network clear and organized.
 
+## 🚀 Quick Install
+
+1. Download or clone this repository to your machine.
+2. Open Chrome and navigate to `chrome://extensions/`.
+3. Toggle Developer mode on in the top right corner.
+4. Click `Load unpacked` and select the Constellation extension folder.
+5. Pin the extension to your toolbar and start building your contacts list!
+
 ## 📸 See it in Action
-![Codeforces profile interface](<screenshots/Screenshot 2026-05-28 221112.png>)
-![Extension popup interface](<screenshots/Screenshot 2026-05-28 221145.png>)
-![HackerRank profile interface](<screenshots/Screenshot 2026-05-28 221213.png>)
+![Codeforces friends page](screenshots/cf%20friends%20page.png)
+![Extension popup interface](screenshots/popup%20home.png)
+![Contact details in popup](screenshots/contact%20in%20popup.png)
+![HackerRank interface](screenshots/Text%20box%20on%20HackerRank.png)
+![Codeforces problem status](screenshots/friend%20status%20on%20cf%20problem.png)
 
 ## ✨ Key Features at a Glance
 - **No More Guessing:** Real names render inline next to usernames everywhere—leaderboards, standings, and comments.
@@ -71,14 +81,6 @@ Constellation is built to be lightweight and fast so it never bogs down your bro
 - **Data Persistence:** Leverages the native `chrome.storage.sync` API for seamless cross-device synchronization.
 
 - **Safe Parsing:** Caches regex-based URL parsing results directly on DOM elements to avoid CPU-heavy recalculations while you scroll.
-
-## 🚀 Quick Install
-
-1. Download or clone this repository to your machine.
-2. Open Chrome and navigate to `chrome://extensions/`.
-3. Toggle Developer mode on in the top right corner.
-4. Click `Load unpacked` and select the Constellation extension folder.
-5. Pin the extension to your toolbar and start building your contacts list!
 
 ## Privacy
 All notes are stored locally in your browser's sync storage. No data is sent to external servers, and the extension runs solely on the designated domains.
