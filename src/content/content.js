@@ -53,10 +53,27 @@ if (hostname.includes("atcoder.jp")) {
     };
 }
 
-const HACKERRANK_RESERVED = ['challenges', 'domains', 'contests', 'dashboard', 'leaderboard', 'interview', 'skills-verification', 'work', 'settings', 'auth', 'login', 'logout', 'about', 'careers', 'community', 'privacy', 'terms', 'blog', 'forum', 'tracks', 'skills', 'certificates', 'campaign', 'events', 'hackathons', 'support', 'administration', 'scoring', 'test', 'feedback', 'rest', 'network'];
+const HACKERRANK_RESERVED = ['challenges', 'domains', 'contests', 'dashboard', 'leaderboard', 'interview', 'skills-verification', 'work', 'settings', 'auth', 'login', 'logout', 'about', 'careers', 'community', 'privacy', 'terms', 'blog', 'forum', 'tracks', 'skills', 'certificates', 'campaign', 'events', 'hackathons', 'support', 'administration', 'scoring', 'test', 'test-v2', 'feedback', 'rest', 'network'];
 
 let StorageManager;
 let currentDropdown = null;
+
+// Helper to check if a link is actually mentioning a user vs being a structural link
+function isLinkUserMention(link, handle) {
+    const handleLower = handle.toLowerCase();
+    const textContent = link.textContent.toLowerCase();
+    const textNoSpace = textContent.replace(/\s+/g, '');
+    
+    let isUserMention = (textNoSpace === handleLower || textNoSpace === '@' + handleLower);
+    
+    if (!isUserMention) {
+        const regex = new RegExp(`(^|[^a-z0-9_-])${handleLower}([^a-z0-9_-]|$)`);
+        if (regex.test(textContent)) {
+            isUserMention = true;
+        }
+    }
+    return isUserMention;
+}
 
 // Initialize the content script after StorageManager is loaded
 async function initContentScript() {
@@ -64,6 +81,60 @@ async function initContentScript() {
         const url = chrome.runtime.getURL('src/utils/storageManager.js');
         const module = await import(url);
         StorageManager = module.StorageManager;
+        
+        const style = document.createElement('style');
+        style.textContent = `
+            /* Comprehensive dark mode support for GfG, Kaggle, LeetCode, etc. */
+            html[data-theme="dark"] .cf-note-profile-container div,
+            html[data-theme="dark"] .cf-note-profile-container input,
+            [data-theme="dark"] .cf-note-profile-container div,
+            [data-theme="dark"] .cf-note-profile-container input,
+            [theme="dark"] .cf-note-profile-container div,
+            [theme="dark"] .cf-note-profile-container input,
+            [data-mui-color-scheme="dark"] .cf-note-profile-container div,
+            [data-mui-color-scheme="dark"] .cf-note-profile-container input,
+            .theme-dark .cf-note-profile-container div,
+            .theme-dark .cf-note-profile-container input,
+            .dark-theme .cf-note-profile-container div,
+            .dark-theme .cf-note-profile-container input,
+            html.dark .cf-note-profile-container div,
+            html.dark .cf-note-profile-container input,
+            body.dark .cf-note-profile-container div,
+            body.dark .cf-note-profile-container input {
+                color: #e0e0e0 !important;
+            }
+
+            html[data-theme="dark"] .cf-note-profile-container input::placeholder,
+            [data-theme="dark"] .cf-note-profile-container input::placeholder,
+            [theme="dark"] .cf-note-profile-container input::placeholder,
+            [data-mui-color-scheme="dark"] .cf-note-profile-container input::placeholder,
+            .theme-dark .cf-note-profile-container input::placeholder,
+            .dark-theme .cf-note-profile-container input::placeholder,
+            html.dark .cf-note-profile-container input::placeholder,
+            body.dark .cf-note-profile-container input::placeholder {
+                color: #aaaaaa !important;
+            }
+        `;
+
+        // Only apply the OS-level dark mode media query to Kaggle.
+        // Sites like Codeforces and AtCoder are always light-themed, so if we apply this globally, 
+        // OS dark mode would make the text white against their light backgrounds!
+        if (config.site === 'kaggle') {
+            style.textContent += `
+                /* Fallback: if the site uses native OS dark mode preference */
+                @media (prefers-color-scheme: dark) {
+                    .cf-note-profile-container div,
+                    .cf-note-profile-container input {
+                        color: #e0e0e0 !important;
+                    }
+                    .cf-note-profile-container input::placeholder {
+                        color: #aaaaaa !important;
+                    }
+                }
+            `;
+        }
+
+        document.head.appendChild(style);
         
         injectProfileEditor();
         chrome.storage.local.get(['showBadges'], (res) => {
@@ -126,8 +197,18 @@ async function injectProfileEditor() {
 
     const handle = urlMatch[1];
     
-    // Prevent injecting textboxes on HackerRank or Kaggle system pages that mimic profile URLs
-    const isSystemPage = (config.site === 'hackerrank' || config.site === 'kaggle') && HACKERRANK_RESERVED.includes(handle.toLowerCase());
+    // For HackerRank, only show text box on /profile/ URLs and prevent injection on 404 pages
+    if (config.site === 'hackerrank') {
+        if (!window.location.pathname.includes('/profile/')) {
+            return;
+        }
+        if (document.body && document.body.textContent.includes("We could not find the page you were looking for")) {
+            return;
+        }
+    }
+
+    // Prevent injecting textboxes on Kaggle system pages that mimic profile URLs
+    const isSystemPage = config.site === 'kaggle' && HACKERRANK_RESERVED.includes(handle.toLowerCase());
     if (isSystemPage) {
         return;
     }
@@ -448,8 +529,8 @@ async function injectNotesEverywhere() {
             link.dataset.cachedPathToMatch = pathToMatch;
         }
 
-        // Skip common non-profile links (especially important for HackerRank/Kaggle which uses broad match)
-        const isSystemPage = (config.site === 'hackerrank' || config.site === 'kaggle') && HACKERRANK_RESERVED.includes(handle.toLowerCase());
+        // Skip common non-profile links (especially important for Kaggle which uses broad match)
+        const isSystemPage = config.site === 'kaggle' && HACKERRANK_RESERVED.includes(handle.toLowerCase());
         if (isSystemPage) {
             continue;
         }
@@ -466,24 +547,7 @@ async function injectNotesEverywhere() {
         }
 
         // Root cause fix: Structural/Navigation links vs User Mention links.
-        // A user mention link's primary purpose is displaying the user's handle.
-        // If the link text is completely different from the handle (like "Algorithm", "Submissions"),
-        // it is a structural link and should NOT be annotated.
-        const handleLower = handle.toLowerCase();
-        const textContent = link.textContent.toLowerCase();
-        const textNoSpace = textContent.replace(/\s+/g, '');
-        
-        let isUserMention = (textNoSpace === handleLower || textNoSpace === '@' + handleLower);
-        
-        if (!isUserMention) {
-            // Check if the text contains the handle with word boundaries (handles names, stars like "★ tourist")
-            const regex = new RegExp(`(^|[^a-z0-9_-])${handleLower}([^a-z0-9_-]|$)`);
-            if (regex.test(textContent)) {
-                isUserMention = true;
-            }
-        }
-        
-        if (!isUserMention) {
+        if (!isLinkUserMention(link, handle)) {
             continue;
         }
 

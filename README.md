@@ -33,6 +33,8 @@ A Chrome extension that takes the guesswork out of wacky competitive programming
 
 - **Universal Platform Support:** Works flawlessly across Codeforces, AtCoder, LeetCode, HackerRank, Kaggle, and GeeksforGeeks.
 
+- **Smart Dark Mode Integration:** Automatically adapts to the native dark mode of platforms like GeeksforGeeks and Kaggle so your notes and textboxes are always readable.
+
 - **Cross-Device Sync:** Your contacts are automatically synchronized across all your Chrome browsers.
 
 - **Privacy First:** All data is strictly kept in your browser's local sync storage. No external servers, no tracking.
@@ -42,6 +44,10 @@ A Chrome extension that takes the guesswork out of wacky competitive programming
 constellation/
 ├── src/
 │   ├── background/
+│   │   ├── api/
+│   │   │   ├── index.js
+│   │   │   ├── queue.js
+│   │   │   └── [platform-specific].js
 │   │   └── background.js
 │   ├── content/
 │   │   └── content.js
@@ -59,6 +65,7 @@ constellation/
 │       └── Platform Logos/
 ├── screenshots/
 │   └── Screenshot*.png
+├── AI_CONTEXT.md
 └── manifest.json
 ```
 

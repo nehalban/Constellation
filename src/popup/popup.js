@@ -454,6 +454,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 url = `https://leetcode.com/u/${handle}`;
                             } else if (platform === 'hackerrank') {
                                 url = `https://www.hackerrank.com/${handle}`;
+                            } else if (platform === 'geeksforgeeks') {
+                                url = `https://www.geeksforgeeks.org/user/${handle}/`;
+                            } else if (platform === 'kaggle') {
+                                url = `https://www.kaggle.com/${handle}`;
                             }
                             
                             if (url) {
