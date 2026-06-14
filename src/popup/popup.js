@@ -239,7 +239,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const getPlatformLogo = (platform) => {
         if (platform === 'codeforces') return '../../assets/images/Platform Logos/CodeForces.png';
-        if (platform === 'atcoder') return '../../assets/images/Platform Logos/AtCoder.webp';
+        if (platform === 'atcoder') {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            return isDark ? '../../assets/images/Platform Logos/AtCoder_dark.png' : '../../assets/images/Platform Logos/AtCoder_light.webp';
+        }
         if (platform === 'leetcode') return '../../assets/images/Platform Logos/LeetCode.png';
         if (platform === 'hackerrank') return '../../assets/images/Platform Logos/HackerRank.png';
         if (platform === 'kaggle') return '../../assets/images/Platform Logos/Kaggle.png';
@@ -423,7 +426,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                         if (platform === 'codeforces') {
                             logoSrc = '../../assets/images/Platform Logos/CodeForces.png';
                         } else if (platform === 'atcoder') {
-                            logoSrc = '../../assets/images/Platform Logos/AtCoder.webp';
+                            const isDark = document.body.getAttribute('data-theme') === 'dark';
+                            logoSrc = isDark ? '../../assets/images/Platform Logos/AtCoder_dark.png' : '../../assets/images/Platform Logos/AtCoder_light.webp';
                         } else if (platform === 'leetcode') {
                             logoSrc = '../../assets/images/Platform Logos/LeetCode.png';
                         } else if (platform === 'hackerrank') {
