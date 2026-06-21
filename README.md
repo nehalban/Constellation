@@ -3,15 +3,18 @@ A Chrome extension that takes the guesswork out of wacky competitive programming
 
 ## 🚀 Quick Install
 
+[Install Constellation from the Chrome Web Store](https://chrome.google.com/webstore/detail/biehdabknjilldfnmghpilieknabgclh), then pin it to your toolbar and start building your contacts list!
+
+### Install from source
+
 1. Download or clone this repository to your machine.
 2. Open Chrome and navigate to `chrome://extensions/`.
 3. Toggle Developer mode on in the top right corner.
 4. Click `Load unpacked` and select the Constellation extension folder.
-5. Pin the extension to your toolbar and start building your contacts list!
 
 ## 📸 See it in Action
 ![Codeforces friends page](screenshots/cf%20friends%20page.png)
-![Extension popup interface](screenshots/popup%20home.png)
+![Extension popup interface](screenshots/popup%20home%20light%20mode.png)
 ![Contact details in popup](screenshots/contact%20in%20popup.png)
 ![HackerRank interface](screenshots/Text%20box%20on%20HackerRank.png)
 ![Codeforces problem status](screenshots/friend%20status%20on%20cf%20problem.png)
