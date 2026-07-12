@@ -114,6 +114,13 @@ async function initContentScript() {
             body.dark .cf-note-profile-container input::placeholder {
                 color: #aaaaaa !important;
             }
+
+            .selectedLava .cf-note-tag,
+            .backLava .cf-note-tag {
+                color: #000000 !important;
+                position: relative;
+                z-index: 1;
+            }
         `;
 
         // Only apply the OS-level dark mode media query to Kaggle.
@@ -570,7 +577,11 @@ async function injectNotesEverywhere() {
             span.style.marginLeft = "4px";
             span.style.fontWeight = "normal";
 
-            link.insertAdjacentElement("afterend", span);
+            if (link.closest(".selectedLava, .backLava")) {
+                link.appendChild(span);
+            } else {
+                link.insertAdjacentElement("afterend", span);
+            }
         }).catch(err => console.error(err));
     }
 }
